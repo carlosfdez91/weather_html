@@ -2,6 +2,7 @@
 import requests
 import json
 from jinja2 import Template
+plantilla = open("plantilla.html","w")
 
 def orientacion(direccion):
 	"""Función que calcula la dirección de la que procede el viento"""
