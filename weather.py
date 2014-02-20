@@ -3,13 +3,13 @@ import requests
 import json
 import webbrowser
 from jinja2 import Template
-plan = open("plantilla.html","r")
+plantilla = open("plantilla.html","r")
 capitales = ['Almeria','Cadiz','Cordoba','Granada','Huelva','Jaen','Malaga','Sevilla']
-num_capitales = 0
 
 html = ''
-for linea in plan:
-	html = html + linea
+for linea in plantilla:
+	html += linea
+
 plantilla = Template(html)
 
 lista_temp_min = []
@@ -21,46 +21,41 @@ def orientacion(direccion):
 	"""Función que calcula la dirección de la que procede el viento"""
 	for grados in str(direccion):
 		if direccion >= 337 and direccion < 22.5:
-			return "N"
+			return 'N'
 		elif direccion >= 22.5 and direccion < 67.5:
-			return "NE"
+			return 'NE'
 		elif direccion >= 67.5 and direccion < 112.5:
-			return "E"
+			return 'E'
 		elif direccion >= 112.5 and direccion < 157.5:
-			return "SE"
+			return 'SE'
 		elif direccion >= 157.5 and direccion < 202.5:
-			return "S"
+			return 'S'
 		elif direccion >= 202.5 and direccion < 247.5:
-			return "SO"
+			return 'SO'
 		elif direccion >= 247.5 and direccion < 292.5:
-			return "O"
+			return 'O'
 		elif direccion >= 292.5 and direccion < 337.5:
-			return "NO"
+			return 'NO'
 
-while num_capitales <= 7:
-	fichero = requests.get('http://api.openweathermap.org/data/2.5/weather/',params={'q':'%s,spain' %capitales[num_capitales]})
-	dicc = json.loads(fichero.text)
-
-
+for capital in capitales:
+	resultado = requests.get('http://api.openweathermap.org/data/2.5/weather/',params={'q':'%s,spain' % capital})
+	dicc = json.loads(resultado.text)
 	temp_min = round(dicc["main"]["temp_min"] - 273)
 	temp_max = round(dicc["main"]["temp_max"] - 273)
 	viento = round(dicc["wind"]["speed"] * 1.61,2)
 	redon = round(viento, 2)
 	direccion = dicc["wind"]["deg"]
-
+	direccion = orientacion(direccion)
 	lista_temp_min.append(temp_min)
 	lista_temp_max.append(temp_max)
 	lista_redon.append(redon)
-	lista_direccion.append(orientacion)
+	lista_direccion.append(direccion)
 
-	num_capitales = num_capitales + 1
 
-plantilla_salida = plantilla.render(capitales_num=capitales,temp_min=lista_temp_min,temp_max=lista_temp_max,speed=lista_redon,direccion_viento=lista_direccion)
+plantilla = plantilla.render(capitales=capitales,temp_min=lista_temp_min,temp_max=lista_temp_max,speed=lista_redon,direccion_viento=lista_direccion)
 
-resultado=open('plantilla_salida.html','w')
-resultado.write(plantilla_salida)
-resultado.close()
-webbrowser.open("plantilla_salida.html")
+resultado=open('salida.html','w')
+resultado.write(plantilla)
 
-#print "La temparatura mínima de %s es de %s ºC, la máxima es de %s ºC\ny el viento es de %s km/h Dirección %s " % (capitales[7],temp_min,temp_max,redon,orientacion(direccion))
+webbrowser.open("salida.html")
 
