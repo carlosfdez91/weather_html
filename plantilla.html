@@ -2,17 +2,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es">
 	<head>
 		<meta charset="utf-8">
-		<title>El Tiempo en Andalucía</title >
+		<title>El Tiempo en Andalucia</title >
 	</head>
 		<body>
-			<h1>El Tiempo en Andalucía</h1>
+			<h1>El Tiempo en Andalucia</h1>
 			{% set count = 0 %}
-			{%- for ciudad in ciudades %}
+			{%- for capital in capitales_num %}
 			<h2>{{ capital }}</h2>
 				<ul>
-					<li>Temperatura mínima prevista: {{ temp_min }} ºC</li>
-					<li>Temperatura máxima prevista: {{ temp_max }} ºC</li>
-					<li>Viento: {{ speed }} Km/h Dirección {{ direccion_viento }}</li>
+					<li>Temperatura minima prevista: {{ temp_min }} C</li>
+					<li>Temperatura maxima prevista: {{ temp_max }} C</li>
+					<li>Viento: {{ speed }} Km/h Direccion {{ direccion_viento }}</li>
 					{% set count = count + 1 %}
 				</ul>
 			{%- endfor %}
