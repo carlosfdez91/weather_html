@@ -4,13 +4,15 @@ import json
 import webbrowser
 from jinja2 import Template
 plantilla = open("plantilla.html","r")
-capitales = ['Almeria','Cadiz','Cordoba','Granada','Huelva','Jaen','Malaga','Sevilla']
+capitales = ['Almeria','Cadiz','Cordoba','Huelva','Jaen','Malaga','Sevilla','Granada']
 
 html = ''
 for linea in plantilla:
 	html += linea
 
 plantilla = Template(html)
+
+pasar = True
 
 lista_temp_min = []
 lista_temp_max = []
@@ -40,17 +42,28 @@ def orientacion(direccion):
 for capital in capitales:
 	resultado = requests.get('http://api.openweathermap.org/data/2.5/weather/',params={'q':'%s,spain' % capital})
 	dicc = json.loads(resultado.text)
-	temp_min = round(dicc["main"]["temp_min"] - 273)
-	temp_max = round(dicc["main"]["temp_max"] - 273)
-	viento = round(dicc["wind"]["speed"] * 1.61,2)
-	redon = round(viento, 2)
-	direccion = dicc["wind"]["deg"]
-	direccion = orientacion(direccion)
-	lista_temp_min.append(temp_min)
-	lista_temp_max.append(temp_max)
-	lista_redon.append(redon)
-	lista_direccion.append(direccion)
 
+	if dicc == {u'message': u'Error: Not found city', u'cod': u'404'}:
+		pasar = False
+		temp_min = ' '
+		temp_max = ' '
+		redon = ' '
+		direccion = ' '
+
+
+	if pasar == True:
+		temp_min = dicc["main"]["temp_min"] - 273
+		temp_max = dicc["main"]["temp_max"] - 273
+		viento = round(dicc["wind"]["speed"] * 1.61,2)
+		redon = round(viento, 2)
+		direccion = dicc["wind"]["deg"]
+		direccion = orientacion(direccion)
+		lista_temp_min.append(temp_min)
+		lista_temp_max.append(temp_max)
+		lista_redon.append(redon)
+		lista_direccion.append(direccion)
+
+	pasar = True
 
 plantilla = plantilla.render(capitales=capitales,temp_min=lista_temp_min,temp_max=lista_temp_max,speed=lista_redon,direccion_viento=lista_direccion)
 
